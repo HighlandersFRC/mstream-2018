@@ -10,8 +10,6 @@ do
         if [ -z "${rc}" ]; then
             /home/pi/mjpg-streamer.sh start ${j}
             more=1
-        else
-            echo "Already started: /dev/video${j}"
         fi
     done
 

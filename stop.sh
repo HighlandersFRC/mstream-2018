@@ -10,8 +10,6 @@ do
         if [ -z "${rc}" ]; then
             /home/pi/mjpg-streamer.sh stop ${j}
             more=1
-        else
-            echo "Already stopped: /dev/video${j}"
         fi
     done
 

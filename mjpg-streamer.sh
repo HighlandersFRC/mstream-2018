@@ -58,7 +58,7 @@ function running() {
     if ps aux | grep ${MJPG_STREAMER_BIN} | grep ${VIDEO_DEV} >/dev/null 2>&1; then
         return 0
     else
-        msg="Check if running...Not running"
+        msg="Check if running...Not running: ${VIDEO_DEV}, $(date)"
         echo ${msg} 2>&1 | tee -a ${MJPG_STREAMER_LOG_FILE}
         return 1
     fi
@@ -67,19 +67,16 @@ function running() {
 function start() {
 
     if running; then
-        msg="Already streaming on device: [${VIDEO_DEV}]."
-        echo ${msg} 2>&1 | tee -a ${MJPG_STREAMER_LOG_FILE}
-        print_debug_data
-        msg="Exiting for device: ${VIDEO_DEV}]..."
+        msg="Called start but already streaming on device: [${VIDEO_DEV}], $(date)"
         echo ${msg} 2>&1 | tee -a ${MJPG_STREAMER_LOG_FILE}
         return 1
     fi
 
     if [ ! -e ${VIDEO_DEV} ]; then
-        msg="Missing video device file: [${VIDEO_DEV}]."
+        msg="Called start but missing video device file: [${VIDEO_DEV}], $(date)."
         echo ${msg} 2>&1 | tee -a ${MJPG_STREAMER_LOG_FILE}
         print_debug_data
-        msg="Exiting for device: ${VIDEO_DEV}]..."
+        msg="Exiting for device: ${VIDEO_DEV}]...$(date)"
         echo ${msg} 2>&1 | tee -a ${MJPG_STREAMER_LOG_FILE}
         return 1
     fi
@@ -87,9 +84,7 @@ function start() {
     command="${MJPG_STREAMER_BIN} -i \"input_uvc.so ${INPUT_OPTIONS}\" -o \"output_http.so ${OUTPUT_OPTIONS}\""
     echo ${command}; echo ${command} >> ${MJPG_STREAMER_LOG_FILE}
     
-    print_debug_data
     eval ${command} >> ${MJPG_STREAMER_LOG_FILE} 2>&1 & 
-    print_debug_data
 
     if running; then
         if [ "$1" != "nocheck" ]; then
@@ -97,12 +92,12 @@ function start() {
             check_hanging & > /dev/null 2>&1 # start the hanging checking task
         fi
 
-        msg="Successfully started streaming on [${VIDEO_DEV}]"
+        msg="Successfully started streaming on [${VIDEO_DEV}], $(date)"
         echo "[${VIDEO_DEV}] started" >> ${MJPG_STREAMER_LOG_FILE} 2>&1
         return 0
 
     else
-        msg="Failed to start streaming on device: [${VIDEO_DEV}]."
+        msg="Failed to start streaming on device: [${VIDEO_DEV}], $(date)."
         echo ${msg} 2>&1 | tee -a ${MJPG_STREAMER_LOG_FILE}
         print_debug_data
         return 1
@@ -111,7 +106,7 @@ function start() {
 
 function stop() {
     if ! running; then
-        msg="Called stop but not streaming on device: [${VIDEO_DEV}]"
+        msg="Called stop but not streaming on device: [${VIDEO_DEV}], $(date)"
         echo ${msg} 2>&1 | tee -a ${MJPG_STREAMER_LOG_FILE}
         return 1
     fi
@@ -127,38 +122,36 @@ function stop() {
     # stop the server
     ps aux | grep ${MJPG_STREAMER_BIN} | grep ${VIDEO_DEV} | tr -s ' ' | cut -d ' ' -f 2 | grep -v ${own_pid} | xargs -r kill
 
-    msg="Stopped streamin on device: [${VIDEO_DEV}]"
+    msg="Stopped streamin on device: [${VIDEO_DEV}], $(date)"
     echo ${msg} 2>&1 | tee -a ${MJPG_STREAMER_LOG_FILE}
     return 0
 }
 
 function check_running() {
-    echo "Check streaming on device: [${VIDEO_DEV}]. Starting running check task..." >> ${MJPG_STREAMER_LOG_FILE} 2>&1
+    echo "Called check_running task for device: [${VIDEO_DEV}], $(date)" >> ${MJPG_STREAMER_LOG_FILE} 2>&1
 
     while true; do
         sleep ${RUNNING_CHECK_INTERVAL}
 
         if ! running; then
-            debug
-            echo "Streaming stopped on device: [${VIDEO_DEV}]." >> ${MJPG_STREAMER_LOG_FILE} 2>&1
-            debug
-            echo "Start streaming on device: [${VIDEO_DEV}]..." >> ${MJPG_STREAMER_LOG_FILE} 2>&1
+            print_debug_data
+            echo "check_running: Streaming stopped on device: [${VIDEO_DEV}], $(date)." >> ${MJPG_STREAMER_LOG_FILE} 2>&1
+            print_debug_data
             start nocheck
         fi
     done
 }
 
 function check_hanging() {
-    echo "[${VIDEO_DEV}] starting hanging check task" >> ${MJPG_STREAMER_LOG_FILE} 2>&1
+    echo "check_haning task started: [${VIDEO_DEV}], $(date)" >> ${MJPG_STREAMER_LOG_FILE} 2>&1
 
     while true; do
         sleep ${HANGING_CHECK_INTERVAL}
 
         # treat the "error grabbing frames" case
         if tail -n2 ${MJPG_STREAMER_LOG_FILE} | grep -i "error grabbing frames" > /dev/null; then
-            echo "Streaming hung on device: [${VIDEO_DEV}]." >> ${MJPG_STREAMER_LOG_FILE} 2>&1
-            debug
-            echo "Invoke stop device: [${VIDEO_DEV}]..." >> ${MJPG_STREAMER_LOG_FILE} 2>&1
+            echo "check_hanging: detected hung device: [${VIDEO_DEV}], $(date)." >> ${MJPG_STREAMER_LOG_FILE} 2>&1
+            print_debug_data
             stop nocheck
         fi
     done
@@ -182,11 +175,11 @@ elif [ "$1" == "restart" ]; then
 
 elif [ "$1" == "status" ]; then
     if running; then
-        msg="Running: [${VIDEO_DEV}]"
+        msg="Called status: Running: [${VIDEO_DEV}], $(date)"
         echo ${msg} 2>&1 | tee -a ${MJPG_STREAMER_LOG_FILE}
         exit 0
     else
-        msg="Stopped: [${VIDEO_DEV}]"
+        msg="Called status: Stopped: [${VIDEO_DEV}], $(date)"
         echo ${msg} 2>&1 | tee -a ${MJPG_STREAMER_LOG_FILE}
         exit 1
     fi
