@@ -7,12 +7,10 @@ This repository contains Linux scripts, Jevois configuration files and documenta
 
 
 ## Compatibility
-1. Raspberry PI Hardware & Raspian OS Version
-   1. These instructions were verified with a PI Model 2 B
-   1. The Raspian version: **8 (stretch)*
-   1. Kernel version: 4.15.52-v7 #1123 Wenesday June 27  2018
-1. Jevois configuration file
-   1. These instructions were verified on JeVois images: **1.7.2**, **1.8.1**
+1. These instructions were verified with the following configurations:
+   1. Raspberry PI Model 2B, Raspian OS Version: **8 (stretch)**, JeVois: **1.8.1**
+   1. Raspberry PI Model 3B, Raspian OS Version: **8 (stretch)**, JeVois: **1.8.1**
+   1. Raspberry PI Model 3B, (unknown Raspian), JeVois: **1.7.2**, 
    
    
 ## Configuration Instructions
