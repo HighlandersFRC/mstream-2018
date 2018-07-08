@@ -6,7 +6,7 @@ do
     more=0
     for j in 0 1 2
     do
-        rc=$(/home/pi/mjpg-streamer.sh status ${j} | grep running)
+        rc=$(/home/pi/mjpg-streamer.sh status ${j} | grep Running)
         if [ -z "${rc}" ]; then
             /home/pi/mjpg-streamer.sh start ${j}
             more=1
