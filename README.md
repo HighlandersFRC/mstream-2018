@@ -26,9 +26,12 @@ This repository contains Linux scripts, Jevois configuration files and documenta
    1. Install and build the mjpg-streamer package on the Raspberry PI
       1. [MJPG Instructions](https://github.com/cncjs/cncjs/wiki/Setup-Guide:-Raspberry-Pi-%7C-MJPEG-Streamer-Install-&-Setup-&-FFMpeg-Recording)   
       1. To enable future customization of individual camera streams the a separate copy of the www directory is created for 3 streams.
-         1. **sudo cp /etc/apache2/www /home/pi/www_0**
-         1. **sudo cp /etc/apache2/www /home/pi/www_1**
-         1. **sudo cp /etc/apache2/www /home/pi/www_2**
+         1. **sudo cp /usr/local/share/mjpg-streamer/www /home/pi/www_0**
+         1. **sudo cp /usr/local/share/mjpg-streamer/www /home/pi/www_1**
+         1. **sudo cp /usr/local/share/mjpg-streamer/www /home/pi/www_2**
+         1. **sudo chown -R pi:pi /home/pi/www_0**
+         1. **sudo chown -R pi:pi /home/pi/www_1**
+         1. **sudo chown -R pi:pi /home/pi/www_2**
          
    1. Configure static IP on the PI for
       1. Configure a static IP for the PI which will work with the RoboRio (**10.XX.YY.11** where your team number is **xx.yy**)
